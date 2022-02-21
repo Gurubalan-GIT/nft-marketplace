@@ -1,11 +1,7 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-
 export default function Home() {
   return (
-    <div className={styles.container}>
-     Flush
+    <div className="flex flex-col justify-center items-center h-screen w-screen">
+     <p>Flush</p>
     </div>
   )
 }
