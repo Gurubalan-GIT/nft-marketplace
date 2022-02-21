@@ -1,7 +1,14 @@
-export default function Home() {
+import { Col } from "antd";
+import Hero from "../components/Hero";
+import Navbar from "../components/Navbar";
+
+const Home = () => {
   return (
-    <div className="flex flex-col justify-center items-center h-screen w-screen">
-     <p>Flush</p>
-    </div>
-  )
+    <Col className="h-screen" >
+      <Navbar />
+      <Hero />
+    </Col>
+  );
 }
+
+export default Home;

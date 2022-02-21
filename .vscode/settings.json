@@ -1,0 +1,43 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "git.autofetch": true,
+  "todohighlight.keywords": [
+    { "text": "TODO", "backgroundColor": "lightBlue" },
+    { "text": "NOTE", "backgroundColor": "lightGrey" },
+    { "text": "CHECKME", "backgroundColor": "lightBlue" },
+    { "text": "DOCME", "backgroundColor": "lightGreen" },
+    { "text": "TESTME", "backgroundColor": "pink" },
+    { "text": "PENDING", "backgroundColor": "lightYellow" }
+  ],
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "cSpell.words": [
+    "antd",
+    "FONTAWESOME",
+    "nextjs",
+    "RHAP",
+    "sectionable",
+    "unfetch",
+    "unschool"
+  ]
+}
