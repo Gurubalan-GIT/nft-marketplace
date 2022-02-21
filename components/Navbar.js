@@ -24,7 +24,7 @@ const styles = {
 };
 
 const Navbar = () => {
-  const { address, connectWallet } = useWeb3();
+  const { address, connectWallet, disconnectWallet } = useWeb3();
   return (
     <Row className={styles.wrapper}>
       <Link passHref href="/">
