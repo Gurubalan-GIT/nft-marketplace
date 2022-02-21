@@ -1,3 +1,4 @@
+@import "~antd/dist/antd.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,4 +21,11 @@ a {
 
 .ant-col {
   min-width: unset;
+}
+
+.ant-message-custom-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
 }
