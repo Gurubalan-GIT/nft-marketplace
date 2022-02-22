@@ -9,9 +9,8 @@ import { client as sanityClient } from "../lib/sanity-client";
 const Home = () => {
   const { address } = useWeb3();
 
-  useEffect(() => {
-    if (!address) return;
-    (async () => {
+  const initializeUserInSanity = async () => {
+    try {
       const userDoc = {
         _type: "users",
         _id: address,
@@ -23,10 +22,17 @@ const Home = () => {
         content: `Welcome back ${result?.userName}!`,
         type: "success",
         duration: 2,
-        className: "flex flex-col items-center justify-center",
+        className: "flex flex-col items-center justify-center ",
         icon: <LoginOutlined />,
       });
-    })();
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!address) return;
+    initializeUserInSanity();
   }, [address]);
 
   return (
