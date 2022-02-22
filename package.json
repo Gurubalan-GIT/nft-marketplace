@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@3rdweb/hooks": "^1.9.2",
+    "@3rdweb/sdk": "^1.41.1",
     "@sanity/client": "^3.1.0",
     "antd": "^4.18.8",
+    "lodash": "^4.17.21",
     "next": "12.1.0",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "sass": "^1.49.8"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.2",

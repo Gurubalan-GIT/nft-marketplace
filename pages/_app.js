@@ -1,5 +1,5 @@
 import { ThirdwebWeb3Provider } from "@3rdweb/hooks";
-import "../styles/globals.css";
+import "../styles/globals.scss";
 
 // Chain ID 4 is the Rinkeby Testnet which we are using for development.
 // "Injected" connector is a web3 connection method used by Metamask.
