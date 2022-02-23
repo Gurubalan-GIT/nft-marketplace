@@ -1,25 +1,37 @@
 import { useWeb3 } from "@3rdweb/hooks";
 import { ThirdwebSDK } from "@3rdweb/sdk";
+import {
+  GlobalOutlined,
+  InstagramOutlined,
+  MoreOutlined,
+  TwitterOutlined,
+} from "@ant-design/icons";
+import { Col } from "antd";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
+import LineLoader from "../../components/LineLoader";
+import Navbar from "../../components/Navbar";
+import NFTCard from "../../components/NFTCard";
 import { client as sanityClient } from "../../lib/sanity-client";
 import {
   ALCHEMY_HTTPS_API_KEY,
+  ETH_SVG_PATH,
   NFT_MARKETPLACE_ADDRESS,
 } from "../../localization";
 
 const styles = {
-  bannerImageContainer: `h-[20vh] w-screen overflow-hidden flex justify-center items-center`,
+  rootContainer: `min-h-screen justify-center items-center`,
+  bannerImageContainer: `h-[20vh] w-full flex justify-center items-center`,
   bannerImage: `w-full object-cover`,
-  infoContainer: `w-screen px-4`,
+  infoContainer: `w-full px-4`,
   midRow: `w-full flex justify-center text-white`,
   endRow: `w-full flex justify-end text-white`,
   profileImg: `w-40 h-40 object-cover rounded-full border-2 border-[#202225] mt-[-4rem]`,
   socialIconsContainer: `flex text-3xl mb-[-2rem]`,
   socialIconsWrapper: `w-44`,
-  socialIconsContent: `flex container justify-between text-[1.4rem] border-2 rounded-lg px-2`,
-  socialIcon: `my-2`,
+  socialIconsContent: `flex container justify-between text-[1.4rem] border-2 rounded-lg`,
+  socialIcon: `py-2 flex items-center w-full justify-center rounded-xl hover:cursor-pointer hover:bg-[#000000]`,
   divider: `border-r-2`,
   title: `text-5xl font-bold mb-4`,
   createdBy: `text-lg mb-4`,
@@ -81,6 +93,22 @@ const Collection = () => {
     }
   };
 
+  const fetchNFTModuleMetaDataFromSanity = async () => {
+    const marketItemsQuery = `*[_type == "marketItems" && contractAddress == "${collectionId}" ] {
+      "imageUrl": profileImage.asset->url,
+      "bannerImageUrl": bannerImage.asset->url,
+      volumeTraded,
+      createdBy,
+      contractAddress,
+      "creator": createdBy->userName,
+      title, floorPrice,
+      "allOwners": owners[]->,
+      description
+    }`;
+    const collectionData = await sanityClient.fetch(marketItemsQuery);
+    setCollection(collectionData[0]);
+  };
+
   const nftModule = useMemo(() => {
     if (!provider) return;
 
@@ -115,14 +143,129 @@ const Collection = () => {
     getListings();
   }, [marketPlaceModule]);
 
+  // Create the NFT module on Sanity if not present for adding MetaData
   useEffect(() => {
     if (isEmpty(nfts) || isEmpty(nftModuleMetaData)) return;
     createNFTModuleOnSanity();
   }, [nfts, listings, nftModuleMetaData]);
 
+  // Get the collection data
+  useEffect(() => {
+    fetchNFTModuleMetaDataFromSanity();
+  }, [collectionId]);
+
   console.log(collection, nfts, listings, nftModuleMetaData);
 
-  return <div>Collection</div>;
+  return (
+    <Col className={styles.rootContainer}>
+      {isEmpty(collection) || isEmpty(nfts) || isEmpty(listings) ? (
+        <LineLoader />
+      ) : (
+        <Fragment>
+          <Navbar />
+          <div className={styles.bannerImageContainer}>
+            <img
+              className={styles.bannerImage}
+              src={collection?.bannerImageUrl}
+              alt="banner"
+            />
+          </div>
+          <div className={styles.infoContainer}>
+            <div className={styles.midRow}>
+              <img
+                className={styles.profileImg}
+                src={collection?.imageUrl}
+                alt="profile image"
+              />
+            </div>
+            <div className={styles.endRow}>
+              <div className={styles.socialIconsContainer}>
+                <div className={styles.socialIconsWrapper}>
+                  <div className={styles.socialIconsContent}>
+                    <div className={styles.socialIcon}>
+                      <GlobalOutlined />
+                    </div>
+                    <div className={styles.divider} />
+                    <div className={styles.socialIcon}>
+                      <InstagramOutlined />
+                    </div>
+                    <div className={styles.divider} />
+                    <div className={styles.socialIcon}>
+                      <TwitterOutlined />
+                    </div>
+                    <div className={styles.divider} />
+                    <div className={styles.socialIcon}>
+                      <MoreOutlined />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={styles.midRow}>
+              <div className={styles.title}>{collection?.title}</div>
+            </div>
+            <div className={styles.midRow}>
+              <div className={styles.createdBy}>
+                Created by{" "}
+                <span className="text-[#2081e2]">{collection?.creator}</span>
+              </div>
+            </div>
+            <div className={styles.midRow}>
+              <div className={styles.statsContainer}>
+                <div className={styles.collectionStat}>
+                  <div className={styles.statValue}>{nfts.length}</div>
+                  <div className={styles.statName}>items</div>
+                </div>
+                <div className={styles.collectionStat}>
+                  <div className={styles.statValue}>
+                    {collection?.allOwners?.length ?? 0}
+                  </div>
+                  <div className={styles.statName}>owners</div>
+                </div>
+                <div className={styles.collectionStat}>
+                  <div className={styles.statValue}>
+                    <img
+                      src={ETH_SVG_PATH}
+                      alt="eth"
+                      className={styles.ethLogo}
+                    />
+                    {collection?.floorPrice}
+                  </div>
+                  <div className={styles.statName}>floor price</div>
+                </div>
+                <div className={styles.collectionStat}>
+                  <div className={styles.statValue}>
+                    <img
+                      src={ETH_SVG_PATH}
+                      alt="eth"
+                      className={styles.ethLogo}
+                    />
+                    {collection?.volumeTraded}K
+                  </div>
+                  <div className={styles.statName}>volume traded</div>
+                </div>
+              </div>
+            </div>
+            <div className={styles.midRow}>
+              <div className={styles.description}>
+                {collection?.description}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap">
+            {nfts?.map((nftItem, id) => (
+              <NFTCard
+                key={id}
+                nftItem={nftItem}
+                title={collection?.title}
+                listings={listings}
+              />
+            ))}
+          </div>
+        </Fragment>
+      )}
+    </Col>
+  );
 };
 
 export default Collection;
