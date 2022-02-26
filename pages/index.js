@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Hero from "../components/Hero";
 import LineLoader from "../components/LineLoader";
 import RootLayout from "../Layout/RootLayout";
-import { NFT_BOODLE_COLLECTION_IDION_ID, ROOT_ROUTE } from "../localization";
+import { NFT_BOODLE_COLLECTION_ID, ROOT_ROUTE } from "../localization";
 
 const Home = () => {
   const [nftModuleMetaData, setNftModuleMetaData] = useState({});
@@ -23,7 +23,7 @@ const Home = () => {
   const nftModule = useMemo(() => {
     if (!provider) return;
     const sdk = new ThirdwebSDK(provider.getSigner());
-    const nftModule = sdk.getNFTModule(NFT_BOODLE_COLLECTION_IDION_ID);
+    const nftModule = sdk.getNFTModule(NFT_BOODLE_COLLECTION_ID);
 
     return nftModule;
   }, [provider]);
