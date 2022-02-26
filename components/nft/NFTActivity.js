@@ -1,21 +1,35 @@
 import { DatabaseOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
+import { Table } from "antd";
 import { useState } from "react";
-import { dummyTransactionEvents } from "../../utils/constants";
-import NFTTransactionEvent from "./NFTTransactionEvent";
+import { transactionTableColumns } from "../../utils/constants";
 const style = {
-  wrapper: `w-full mt-8 border border-[#151b22] rounded-xl bg-[#303339] overflow-hidden`,
-  title: `bg-[#262b2f] px-6 py-4 flex items-center`,
-  titleLeft: `flex-1 flex items-center text-xl font-bold`,
-  titleIcon: `text-3xl mr-2 flex items-center justify-center`,
-  titleRight: `text-xl hover:cursor-pointer`,
-  tableHeader: `flex w-full bg-[#262b2f] border-y border-[#151b22] px-4 py-1`,
+  wrapper: `w-full mt-8 border border-[#151b22] rounded-xl bg-[#fafafa] overflow-hidden`,
+  title: `bg-[#fafafa] px-6 py-4 flex items-center hover:cursor-pointer`,
+  titleLeft: `flex-1 flex items-center text-xl font-bold text-black`,
+  titleIcon: `text-3xl mr-2 flex items-center justify-center text-black`,
+  titleRight: `text-xl hover:cursor-pointer text-black`,
   eventItem: `flex px-4`,
   ethLogo: `h-5 mr-2`,
   accent: `text-[#2081e2]`,
 };
 
-const NFTActivity = () => {
+const NFTActivity = ({ nftTransactions, setNftTransactions }) => {
   const [toggle, setToggle] = useState(true);
+
+  const getTransactionDataSource = () => {
+    let transactionDataSource = [];
+    nftTransactions.map((transaction, transactionIndex) => {
+      transactionDataSource.push({
+        key: transactionIndex,
+        price: transaction.price,
+        from: transaction.sellerContractAddress,
+        to: transaction.buyerContractAddress,
+        date: transaction._createdAt,
+      });
+    });
+    return transactionDataSource;
+  };
+
   return (
     <div className={style.wrapper}>
       <div className={style.title} onClick={() => setToggle(!toggle)}>
@@ -31,16 +45,10 @@ const NFTActivity = () => {
       </div>
       {toggle && (
         <div className={style.activityTable}>
-          <div className={style.tableHeader}>
-            <div className={`${style.tableHeaderElement} flex-[2]`}>Event</div>
-            <div className={`${style.tableHeaderElement} flex-[2]`}>Price</div>
-            <div className={`${style.tableHeaderElement} flex-[3]`}>From</div>
-            <div className={`${style.tableHeaderElement} flex-[3]`}>To</div>
-            <div className={`${style.tableHeaderElement} flex-[2]`}>Date</div>
-          </div>
-          {dummyTransactionEvents.map((event, id) => (
-            <NFTTransactionEvent key={id} event={event} />
-          ))}
+          <Table
+            columns={transactionTableColumns}
+            dataSource={getTransactionDataSource(nftTransactions)}
+          />
         </div>
       )}
     </div>

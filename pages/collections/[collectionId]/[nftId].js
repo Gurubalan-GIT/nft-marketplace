@@ -10,6 +10,7 @@ import NFTDetails from "../../../components/nft/NFTDetails";
 import NFTImage from "../../../components/nft/NFTImage";
 import PurchaseNFT from "../../../components/nft/NFTPurchase";
 import RootLayout from "../../../Layout/RootLayout";
+import { client as sanityClient } from "../../../lib/sanity-client";
 import { NFT_MARKETPLACE_ADDRESS } from "../../../localization";
 
 const style = {
@@ -24,8 +25,9 @@ const Nft = () => {
   const { provider } = useWeb3();
   const [selectedNft, setSelectedNft] = useState();
   const [listings, setListings] = useState([]);
+  const [nftTransactions, setNftTransactions] = useState([]);
   const router = useRouter();
-  const { collectionId } = router.query;
+  const { collectionId, nftId } = router.query;
 
   const getSelectedNftFromCollection = async () => {
     try {
@@ -43,6 +45,25 @@ const Nft = () => {
   const getListings = async () => {
     try {
       setListings(await marketPlaceModule.getAllListings());
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const getAllNftTransactions = async () => {
+    const nftTransactionsQuery = `*[_type == "transactions" && marketPlaceContractAddress == "${collectionId}" && nftId == ${Number(
+      nftId
+    )} ]{
+      price,
+      sellerContractAddress,
+      buyerContractAddress,
+      _createdAt
+     }`;
+    try {
+      const nftTransactionsData = await sanityClient.fetch(
+        nftTransactionsQuery
+      );
+      if (nftTransactionsData) setNftTransactions(nftTransactionsData);
     } catch (error) {
       console.warn(error);
     }
@@ -68,10 +89,15 @@ const Nft = () => {
     return sdk.getMarketplaceModule(NFT_MARKETPLACE_ADDRESS);
   }, [provider]);
 
+  // Get Listed NFTs from Marketplace
   useEffect(() => {
     if (!marketPlaceModule) return;
     getListings();
   }, [marketPlaceModule]);
+
+  useEffect(() => {
+    getAllNftTransactions();
+  });
 
   return (
     <RootLayout>
@@ -86,9 +112,23 @@ const Nft = () => {
                   <NFTImage selectedNft={selectedNft} />
                 </div>
                 <div className={style.detailsContainer}>
-                  <NFTDetails selectedNft={selectedNft} />
+                  <NFTDetails
+                    isListed={
+                      listings.find(
+                        (listing) => listing.asset.id === selectedNft.id
+                      ) ?? false
+                    }
+                    selectedNft={selectedNft}
+                    listings={listings}
+                  />
                   <PurchaseNFT
-                    isListed={router.query.isListed}
+                    nftTransactions={nftTransactions}
+                    setNftTransactions={setNftTransactions}
+                    isListed={
+                      listings.find(
+                        (listing) => listing.asset.id === selectedNft.id
+                      ) ?? false
+                    }
                     selectedNft={selectedNft}
                     listings={listings}
                     marketPlaceModule={marketPlaceModule}
@@ -100,7 +140,10 @@ const Nft = () => {
                   />
                 </div>
               </div>
-              <NFTActivity />
+              <NFTActivity
+                nftTransactions={nftTransactions}
+                setNftTransactions={setNftTransactions}
+              />
             </div>
           </div>
         </Fragment>

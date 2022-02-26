@@ -1,6 +1,9 @@
+import { useWeb3 } from "@3rdweb/hooks";
 import { LoginOutlined, WalletOutlined } from "@ant-design/icons";
 import { Button, message } from "antd";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { client as sanityClient } from "../../lib/sanity-client";
 
 const style = {
   button: `mr-8 flex items-center py-2 px-12 rounded-lg cursor-pointer`,
@@ -14,19 +17,21 @@ const PurchaseNFT = ({
   listings,
   marketPlaceModule,
   price,
+  nftTransactions,
+  setNftTransactions,
 }) => {
   const [selectedMarketNft, setSelectedMarketNft] = useState();
   const [enableButton, setEnableButton] = useState(false);
   const [buyingNFT, setBuyingNFT] = useState(false);
   const [isListedStatus, setIsListedStatus] = useState(isListed);
+  const { address } = useWeb3();
+  const router = useRouter();
 
   useEffect(() => {
-    if (!listings || isListed === "false") return;
-    (async () => {
-      setSelectedMarketNft(
-        listings.find((marketNft) => marketNft.asset?.id === selectedNft.id)
-      );
-    })();
+    if (!listings || !isListed) return;
+    setSelectedMarketNft(
+      listings.find((marketNft) => marketNft.asset?.id === selectedNft.id)
+    );
   }, [selectedNft, listings, isListed]);
 
   useEffect(() => {
@@ -35,14 +40,30 @@ const PurchaseNFT = ({
     setEnableButton(true);
   }, [selectedMarketNft, selectedNft]);
 
+  const createTransactionOnSanity = async () => {
+    const transactionDoc = {
+      _type: "transactions",
+      price: Number(price),
+      sellerContractAddress: selectedMarketNft?.sellerAddress,
+      buyerContractAddress: address,
+      marketPlaceContractAddress: router.query.collectionId,
+      nftId: Number(router.query.nftId),
+    };
+    const transactionData = await sanityClient.create(transactionDoc);
+    const updatedNftTransactionsData = [...nftTransactions];
+    updatedNftTransactionsData.unshift(transactionData);
+    setNftTransactions(updatedNftTransactionsData);
+  };
+
   const confirmPurchase = () => {
     setBuyingNFT(false);
-    setIsListedStatus("false");
+    setIsListedStatus(false);
+    createTransactionOnSanity();
     message.success({
-      content: `Welcome back ${result?.userName}!`,
+      content: `Purchase successful`,
       type: "success",
       duration: 2,
-      className: "flex flex-col items-center justify-center ",
+      className: "flex flex-col items-center justify-center",
       icon: <LoginOutlined />,
     });
   };
@@ -53,13 +74,11 @@ const PurchaseNFT = ({
     module = marketPlaceModule
   ) => {
     setBuyingNFT(true);
-    console.log(listingId, quantityDesired, module, "david");
     try {
-      const result = await module.buyoutDirectListing({
+      await module.buyoutDirectListing({
         listingId: listingId,
         quantityDesired: quantityDesired,
       });
-      console.log("result", result);
       confirmPurchase();
     } catch (error) {
       setBuyingNFT(false);
@@ -67,11 +86,9 @@ const PurchaseNFT = ({
     }
   };
 
-  console.log("here", selectedMarketNft);
-
   return (
     <div className="flex h-20 w-full items-center rounded-lg border border-[#151c22] bg-[#303339] px-12">
-      {isListedStatus === "true" ? (
+      {isListedStatus ? (
         <Button
           icon={<WalletOutlined className={style.buttonIcon} />}
           onClick={() => buyItem(selectedMarketNft.id, 1)}
@@ -84,10 +101,7 @@ const PurchaseNFT = ({
           <div>{price} ETH Buy Now</div>
         </Button>
       ) : (
-        <div className={`${style.button} bg-[#2081e2] hover:bg-[#42a0ff]`}>
-          <WalletOutlined className={style.buttonIcon} />
-          <div className={style.buttonText}>List Item</div>
-        </div>
+        <div>This is a one of one NFT and is already purchased.</div>
       )}
     </div>
   );

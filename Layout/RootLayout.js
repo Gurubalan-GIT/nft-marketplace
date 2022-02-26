@@ -1,21 +1,22 @@
 import { useWeb3 } from "@3rdweb/hooks";
 import { LoginOutlined } from "@ant-design/icons";
-import { Col, message } from "antd";
+import { Col, message, notification } from "antd";
 import React, { useEffect } from "react";
+import ConnectWallet from "../components/ConnectWallet";
 import Navbar from "../components/Navbar";
 import { client as sanityClient } from "../lib/sanity-client";
 import { ROOT_ROUTE } from "../localization";
 
 const RootLayout = (props) => {
   const { source, children } = props;
-  const { address } = useWeb3();
+  const { address, error } = useWeb3();
 
   const initializeUserInSanity = async () => {
     try {
       const userDoc = {
         _type: "users",
         _id: address,
-        userName: "",
+        userName: "Unnamed",
         walletAddress: address,
       };
       const result = await sanityClient.createIfNotExists(userDoc);
@@ -33,6 +34,16 @@ const RootLayout = (props) => {
   };
 
   useEffect(() => {
+    if (error?.name) {
+      notification.error({
+        message: error?.name,
+        description: error?.message,
+        duration: 2,
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
     if (!address) return;
     initializeUserInSanity();
   }, [address]);
@@ -40,7 +51,7 @@ const RootLayout = (props) => {
   return (
     <Col className="min-h-screen justify-center items-center">
       <Navbar />
-      {children}
+      {address ? children : <ConnectWallet />}
     </Col>
   );
 };

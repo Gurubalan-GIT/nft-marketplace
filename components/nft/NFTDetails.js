@@ -5,6 +5,7 @@ import {
   SelectOutlined,
   ShareAltOutlined,
 } from "@ant-design/icons";
+import { useEffect, useState } from "react";
 
 const style = {
   wrapper: `flex`,
@@ -21,18 +22,35 @@ const style = {
   divider: `border-r-2`,
 };
 
-const NFTDetails = ({ selectedNft }) => {
+const NFTDetails = ({ selectedNft, listings, isListed }) => {
+  const [selectedMarketNft, setSelectedMarketNft] = useState();
+
+  useEffect(() => {
+    if (!listings || !isListed) return;
+    setSelectedMarketNft(
+      listings.find((marketNft) => marketNft.asset?.id === selectedNft.id)
+    );
+  }, [selectedNft, listings, isListed]);
+
   return (
     <div className={style.wrapper}>
       <div className={style.infoContainer}>
-        <div className={style.accent}>Bored Ape Yacht Club</div>
+        <div className={style.accent}>Boodle Doodles</div>
         <div className={style.nftTitle}>{selectedNft?.name}</div>
         <div className={style.otherInfo}>
-          <div className={style.ownedBy}>
-            Owned by <span className={style.accent}>e88vault</span>
-          </div>
+          {selectedMarketNft && (
+            <div className={style.ownedBy}>
+              Owned by{" "}
+              <a
+                href={`https://rinkeby.etherscan.io/address/${selectedMarketNft?.sellerAddress}`}
+                className={style.accent}
+              >
+                {selectedMarketNft?.sellerAddress}
+              </a>
+            </div>
+          )}
           <div className={style.likes}>
-            <HeartOutlined className={style.likeIcon} /> 2.3K favorites
+            <HeartOutlined className={style.likeIcon} /> {"  "}2.3K favorites
           </div>
         </div>
       </div>
