@@ -51,12 +51,12 @@ const Hero = ({ nftModuleMetaData }) => {
             </div>
           </div>
           <a
-            href={`/collections/${nftModuleMetaData?.address}`}
+            href={`/collections/${nftModuleMetaData?.contractAddress}`}
             className={style.cardContainer}
           >
             <img
               className="rounded-t-lg"
-              src={nftModuleMetaData?.metadata?.image}
+              src={nftModuleMetaData?.imageUrl}
               width="500px"
               alt="hero-bg"
             />
@@ -67,7 +67,7 @@ const Hero = ({ nftModuleMetaData }) => {
                 alt="hero-asset"
               />
               <div className={style.author}>
-                <span>{nftModuleMetaData?.metadata?.name}</span>
+                <span>{nftModuleMetaData?.title}</span>
               </div>
             </div>
           </a>
