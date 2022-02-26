@@ -71,6 +71,40 @@ export default createSchema({
         ],
       },
       {
+        name: "transactions",
+        title: "NFT Transactions",
+        type: "document",
+        fields: [
+          {
+            name: "price",
+            title: "Price",
+            type: "number",
+            validation: (Rule) => Rule.min(0),
+          },
+          {
+            name: "sellerContractAddress",
+            title: "Seller Contract Address",
+            type: "string",
+          },
+          {
+            name: "buyerContractAddress",
+            title: "Buyer Contract Address",
+            type: "string",
+          },
+          {
+            name: "marketPlaceContractAddress",
+            title: "Marketplace Contract Address",
+            type: "string",
+          },
+          {
+            name: "nftId",
+            title: "NFT ID",
+            type: "number",
+            validation: (Rule) => Rule.min(0),
+          },
+        ],
+      },
+      {
         name: "marketItems",
         title: "Market Items",
         type: "document",
@@ -100,11 +134,6 @@ export default createSchema({
             name: "volumeTraded",
             title: "Volume Traded",
             type: "number",
-          },
-          {
-            name: "floorPrice",
-            title: "Floor Price",
-            type: "string",
           },
           {
             name: "owners",

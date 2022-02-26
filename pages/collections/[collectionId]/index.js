@@ -6,19 +6,14 @@ import {
   MoreOutlined,
   TwitterOutlined,
 } from "@ant-design/icons";
-import { Col } from "antd";
-import { isEmpty } from "lodash";
+import { isEmpty, min } from "lodash";
 import { useRouter } from "next/router";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import LineLoader from "../../components/LineLoader";
-import Navbar from "../../components/Navbar";
-import NFTCard from "../../components/NFTCard";
-import { client as sanityClient } from "../../lib/sanity-client";
-import {
-  ALCHEMY_HTTPS_API_KEY,
-  ETH_SVG_PATH,
-  NFT_MARKETPLACE_ADDRESS,
-} from "../../localization";
+import LineLoader from "../../../components/LineLoader";
+import NFTCard from "../../../components/NFTCard";
+import RootLayout from "../../../Layout/RootLayout";
+import { client as sanityClient } from "../../../lib/sanity-client";
+import { ETH_SVG_PATH, NFT_MARKETPLACE_ADDRESS } from "../../../localization";
 
 const styles = {
   rootContainer: `min-h-screen justify-center items-center`,
@@ -112,7 +107,7 @@ const Collection = () => {
   const nftModule = useMemo(() => {
     if (!provider) return;
 
-    const sdk = new ThirdwebSDK(provider.getSigner(), ALCHEMY_HTTPS_API_KEY);
+    const sdk = new ThirdwebSDK(provider.getSigner());
     const nftModule = sdk.getNFTModule(collectionId);
 
     if (!nftModule) {
@@ -133,7 +128,7 @@ const Collection = () => {
   const marketPlaceModule = useMemo(() => {
     if (!provider) return;
 
-    const sdk = new ThirdwebSDK(provider.getSigner(), ALCHEMY_HTTPS_API_KEY);
+    const sdk = new ThirdwebSDK(provider.getSigner());
     return sdk.getMarketplaceModule(NFT_MARKETPLACE_ADDRESS);
   }, [provider]);
 
@@ -154,15 +149,23 @@ const Collection = () => {
     fetchNFTModuleMetaDataFromSanity();
   }, [collectionId]);
 
-  console.log(collection, nfts, listings, nftModuleMetaData);
+  const getFloorPrice = () => {
+    const listedNftsFromModule = listings.filter((listing) =>
+      nfts.map((nft) => nft.id).includes(listing.asset.id)
+    );
+    return min(
+      listedNftsFromModule.map(
+        (listing) => listing.buyoutCurrencyValuePerToken.displayValue
+      )
+    );
+  };
 
   return (
-    <Col className={styles.rootContainer}>
+    <RootLayout>
       {isEmpty(collection) || isEmpty(nfts) || isEmpty(listings) ? (
         <LineLoader />
       ) : (
         <Fragment>
-          <Navbar />
           <div className={styles.bannerImageContainer}>
             <img
               className={styles.bannerImage}
@@ -229,7 +232,7 @@ const Collection = () => {
                       alt="eth"
                       className={styles.ethLogo}
                     />
-                    {collection?.floorPrice}
+                    {getFloorPrice()}
                   </div>
                   <div className={styles.statName}>floor price</div>
                 </div>
@@ -253,18 +256,19 @@ const Collection = () => {
             </div>
           </div>
           <div className="flex flex-wrap">
-            {nfts?.map((nftItem, id) => (
+            {nfts?.map((nftItem) => (
               <NFTCard
-                key={id}
+                key={nftItem.id}
                 nftItem={nftItem}
                 title={collection?.title}
                 listings={listings}
+                collectionId={collectionId}
               />
             ))}
           </div>
         </Fragment>
       )}
-    </Col>
+    </RootLayout>
   );
 };
 
