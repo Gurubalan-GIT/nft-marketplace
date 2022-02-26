@@ -6,7 +6,7 @@ import {
   MoreOutlined,
   TwitterOutlined,
 } from "@ant-design/icons";
-import { isEmpty, min } from "lodash";
+import { isEmpty, min, uniq } from "lodash";
 import { useRouter } from "next/router";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import LineLoader from "../../../components/LineLoader";
@@ -46,11 +46,22 @@ const Collection = () => {
   const [nfts, setNfts] = useState([]);
   const [listings, setListings] = useState([]);
   const [nftModuleMetaData, setNftModuleMetaData] = useState({});
+  const [nftCollectionTradedVolume, setNftCollectionTradedVolume] = useState(0);
+  const [nftOwners, setNftOwners] = useState([]);
 
   const getNFTs = async () => {
     try {
       const nfts = await nftModule.getAll();
       setNfts(nfts);
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const getAllNftOwners = async () => {
+    try {
+      const nftsWithOwners = await nftModule.getAllWithOwner();
+      setNftOwners(uniq(nftsWithOwners.map((nft) => nft.owner)));
     } catch (error) {
       console.warn(error);
     }
@@ -62,6 +73,25 @@ const Collection = () => {
       setNftModuleMetaData(metaData);
     } catch (e) {
       console.warn(e);
+    }
+  };
+
+  const getNftTransactionsTradedVolume = async () => {
+    const nftTransactionsQuery = `*[_type == "transactions" && marketPlaceContractAddress == "${collectionId}" ]{
+      price
+     }`;
+    try {
+      const nftTransactionsData = await sanityClient.fetch(
+        nftTransactionsQuery
+      );
+      if (nftTransactionsData)
+        setNftCollectionTradedVolume(
+          nftTransactionsData
+            .map((nftTransaction) => nftTransaction.price)
+            .reduce((a, b) => a + b, 0)
+        );
+    } catch (error) {
+      console.warn(error);
     }
   };
 
@@ -122,6 +152,7 @@ const Collection = () => {
     if (!nftModule) return;
     getNFTs();
     getNFTModuleMetadata();
+    getAllNftOwners();
   }, [nftModule]);
 
   // Get the entire Marketplace in which NFTs are listed
@@ -147,6 +178,7 @@ const Collection = () => {
   // Get the collection data
   useEffect(() => {
     fetchNFTModuleMetaDataFromSanity();
+    getNftTransactionsTradedVolume();
   }, [collectionId]);
 
   const getFloorPrice = () => {
@@ -221,7 +253,7 @@ const Collection = () => {
                 </div>
                 <div className={styles.collectionStat}>
                   <div className={styles.statValue}>
-                    {collection?.allOwners?.length ?? 0}
+                    {nftOwners.length ?? 0}
                   </div>
                   <div className={styles.statName}>owners</div>
                 </div>
@@ -243,7 +275,7 @@ const Collection = () => {
                       alt="eth"
                       className={styles.ethLogo}
                     />
-                    {collection?.volumeTraded}K
+                    {nftCollectionTradedVolume}
                   </div>
                   <div className={styles.statName}>volume traded</div>
                 </div>
@@ -255,7 +287,7 @@ const Collection = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap px-5">
             {nfts?.map((nftItem) => (
               <NFTCard
                 key={nftItem.id}

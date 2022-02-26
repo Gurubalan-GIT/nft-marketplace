@@ -27,6 +27,8 @@ const Nft = () => {
   const [listings, setListings] = useState([]);
   const [nftTransactions, setNftTransactions] = useState([]);
   const router = useRouter();
+  const [nftModuleMetaData, setNftModuleMetaData] = useState({});
+  const [nftOwner, setNftOwner] = useState();
   const { collectionId, nftId } = router.query;
 
   const getSelectedNftFromCollection = async () => {
@@ -42,6 +44,24 @@ const Nft = () => {
     }
   };
 
+  const getNFTModuleMetadata = async () => {
+    try {
+      const metaData = await nftModule.getMetadata();
+      setNftModuleMetaData(metaData);
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
+  const getNftOwner = async () => {
+    try {
+      const owner = await nftModule.ownerOf(nftId);
+      setNftOwner(owner);
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
   const getListings = async () => {
     try {
       setListings(await marketPlaceModule.getAllListings());
@@ -50,7 +70,7 @@ const Nft = () => {
     }
   };
 
-  const getAllNftTransactions = async () => {
+  const getNftTransactions = async () => {
     const nftTransactionsQuery = `*[_type == "transactions" && marketPlaceContractAddress == "${collectionId}" && nftId == ${Number(
       nftId
     )} ]{
@@ -81,6 +101,8 @@ const Nft = () => {
   useEffect(() => {
     if (!nftModule) return;
     getSelectedNftFromCollection();
+    getNFTModuleMetadata();
+    getNftOwner();
   }, [nftModule]);
 
   const marketPlaceModule = useMemo(() => {
@@ -96,12 +118,15 @@ const Nft = () => {
   }, [marketPlaceModule]);
 
   useEffect(() => {
-    getAllNftTransactions();
-  });
+    getNftTransactions();
+  }, [collectionId, nftId]);
 
   return (
     <RootLayout>
-      {isEmpty(listings) || !marketPlaceModule || !selectedNft ? (
+      {isEmpty(listings) ||
+      !marketPlaceModule ||
+      !selectedNft ||
+      isEmpty(nftModuleMetaData) ? (
         <LineLoader />
       ) : (
         <Fragment>
@@ -113,13 +138,9 @@ const Nft = () => {
                 </div>
                 <div className={style.detailsContainer}>
                   <NFTDetails
-                    isListed={
-                      listings.find(
-                        (listing) => listing.asset.id === selectedNft.id
-                      ) ?? false
-                    }
+                    nftOwner={nftOwner}
+                    nftModuleMetaData={nftModuleMetaData}
                     selectedNft={selectedNft}
-                    listings={listings}
                   />
                   <PurchaseNFT
                     nftTransactions={nftTransactions}

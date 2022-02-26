@@ -14,7 +14,7 @@ const NFTImage = ({ selectedNft }) => {
         <div className={style.topBarContent}>
           <RadarChartOutlined />
           <div className={style.likesCounter}>
-            <HeartOutlined />
+            <HeartOutlined className="mr-2" />
             2.3K
           </div>
         </div>

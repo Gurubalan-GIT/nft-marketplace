@@ -5,7 +5,6 @@ import {
   SelectOutlined,
   ShareAltOutlined,
 } from "@ant-design/icons";
-import { useEffect, useState } from "react";
 
 const style = {
   wrapper: `flex`,
@@ -14,7 +13,7 @@ const style = {
   nftTitle: `text-3xl font-extrabold`,
   otherInfo: `flex`,
   ownedBy: `text-[#8a939b] mr-4`,
-  likes: `flex items-center text-[#8a939b]`,
+  likes: `flex items-center text-[#8a939b`,
   likeIcon: `mr-1`,
   actionButtonsContainer: `w-44`,
   actionButtons: `flex container justify-between text-[1.4rem] border-2 rounded-lg`,
@@ -22,35 +21,27 @@ const style = {
   divider: `border-r-2`,
 };
 
-const NFTDetails = ({ selectedNft, listings, isListed }) => {
-  const [selectedMarketNft, setSelectedMarketNft] = useState();
-
-  useEffect(() => {
-    if (!listings || !isListed) return;
-    setSelectedMarketNft(
-      listings.find((marketNft) => marketNft.asset?.id === selectedNft.id)
-    );
-  }, [selectedNft, listings, isListed]);
-
+const NFTDetails = ({ selectedNft, nftModuleMetaData, nftOwner }) => {
   return (
     <div className={style.wrapper}>
       <div className={style.infoContainer}>
-        <div className={style.accent}>Boodle Doodles</div>
+        <div className={style.accent}>{nftModuleMetaData?.metadata?.name}</div>
         <div className={style.nftTitle}>{selectedNft?.name}</div>
         <div className={style.otherInfo}>
-          {selectedMarketNft && (
+          {nftOwner && (
             <div className={style.ownedBy}>
               Owned by{" "}
               <a
-                href={`https://rinkeby.etherscan.io/address/${selectedMarketNft?.sellerAddress}`}
+                href={`https://rinkeby.etherscan.io/address/${nftOwner}`}
                 className={style.accent}
               >
-                {selectedMarketNft?.sellerAddress}
+                {nftOwner}
               </a>
             </div>
           )}
           <div className={style.likes}>
-            <HeartOutlined className={style.likeIcon} /> {"  "}2.3K favorites
+            <HeartOutlined className={style.likeIcon} />
+            <span> 2.3K favorites</span>
           </div>
         </div>
       </div>

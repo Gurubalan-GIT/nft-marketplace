@@ -5,29 +5,16 @@ import React, { useEffect, useMemo, useState } from "react";
 import Hero from "../components/Hero";
 import LineLoader from "../components/LineLoader";
 import RootLayout from "../Layout/RootLayout";
-import {
-  NFT_COLLECTION_ID,
-  NFT_MARKETPLACE_ADDRESS,
-  ROOT_ROUTE,
-} from "../localization";
+import { NFT_BOODLE_COLLECTION_IDION_ID, ROOT_ROUTE } from "../localization";
 
 const Home = () => {
   const [nftModuleMetaData, setNftModuleMetaData] = useState({});
-  const { address, connectWallet, provider } = useWeb3();
-
-  // Get the entire Marketplace in which NFTs are listed
-  const marketPlaceModule = useMemo(() => {
-    if (!provider) return;
-
-    const sdk = new ThirdwebSDK(provider.getSigner());
-    return sdk.getMarketplaceModule(NFT_MARKETPLACE_ADDRESS);
-  }, [provider]);
+  const { provider } = useWeb3();
 
   const getNFTModuleMetadata = async () => {
     try {
       const metaData = await nftModule.getMetadata();
       setNftModuleMetaData(metaData);
-      console.log(metaData);
     } catch (e) {
       console.warn(e);
     }
@@ -36,7 +23,7 @@ const Home = () => {
   const nftModule = useMemo(() => {
     if (!provider) return;
     const sdk = new ThirdwebSDK(provider.getSigner());
-    const nftModule = sdk.getNFTModule(NFT_COLLECTION_ID);
+    const nftModule = sdk.getNFTModule(NFT_BOODLE_COLLECTION_IDION_ID);
 
     return nftModule;
   }, [provider]);
@@ -44,7 +31,7 @@ const Home = () => {
   useEffect(() => {
     if (!nftModule) return;
     getNFTModuleMetadata();
-  }, [marketPlaceModule]);
+  }, [nftModuleMetaData]);
 
   return (
     <RootLayout source={ROOT_ROUTE}>

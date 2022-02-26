@@ -39,12 +39,6 @@ const Navbar = () => {
         />
       </div>
       <div className={styles.navItems}>
-        <Link
-          passHref
-          href="/collections/0x66a576A977b7Bccf510630E0aA5e450EC11361Fa"
-        >
-          <div className={styles.navItem}> Collections </div>
-        </Link>
         <div className={styles.navItem}> Stats </div>
         <div className={styles.navItem}> Resources </div>
         <div className={styles.navItem}> Create </div>
