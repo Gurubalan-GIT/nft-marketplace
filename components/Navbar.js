@@ -1,9 +1,5 @@
 import { useWeb3 } from "@3rdweb/hooks";
-import {
-  SearchOutlined,
-  UserOutlined,
-  WalletOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined, UserOutlined } from "@ant-design/icons";
 import { Row } from "antd";
 import Image from "next/image";
 import Link from "next/link";
@@ -43,12 +39,6 @@ const Navbar = () => {
         />
       </div>
       <div className={styles.navItems}>
-        <Link
-          passHref
-          href="/collections/0x66a576A977b7Bccf510630E0aA5e450EC11361Fa"
-        >
-          <div className={styles.navItem}> Collections </div>
-        </Link>
         <div className={styles.navItem}> Stats </div>
         <div className={styles.navItem}> Resources </div>
         <div className={styles.navItem}> Create </div>
@@ -57,9 +47,9 @@ const Navbar = () => {
             <div className={styles.navIcon}>
               <UserOutlined />
             </div>
-            <div className={styles.navIcon}>
-              <WalletOutlined />
-            </div>
+            {/* <button onClick={disconnectWallet} className={styles.loginButton}>
+              Disconnect Wallet
+            </button> */}
           </Fragment>
         ) : (
           <button

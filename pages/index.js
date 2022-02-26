@@ -1,45 +1,46 @@
 import { useWeb3 } from "@3rdweb/hooks";
-import { LoginOutlined } from "@ant-design/icons";
-import { Col, message } from "antd";
-import { useEffect } from "react";
+import { ThirdwebSDK } from "@3rdweb/sdk";
+import { isEmpty } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
 import Hero from "../components/Hero";
-import Navbar from "../components/Navbar";
-import { client as sanityClient } from "../lib/sanity-client";
+import LineLoader from "../components/LineLoader";
+import RootLayout from "../Layout/RootLayout";
+import { NFT_BOODLE_COLLECTION_IDION_ID, ROOT_ROUTE } from "../localization";
 
 const Home = () => {
-  const { address } = useWeb3();
+  const [nftModuleMetaData, setNftModuleMetaData] = useState({});
+  const { provider } = useWeb3();
 
-  const initializeUserInSanity = async () => {
+  const getNFTModuleMetadata = async () => {
     try {
-      const userDoc = {
-        _type: "users",
-        _id: address,
-        userName: "",
-        walletAddress: address,
-      };
-      const result = await sanityClient.createIfNotExists(userDoc);
-      message.success({
-        content: `Welcome back ${result?.userName}!`,
-        type: "success",
-        duration: 2,
-        className: "flex flex-col items-center justify-center ",
-        icon: <LoginOutlined />,
-      });
-    } catch (error) {
-      console.warn(error);
+      const metaData = await nftModule.getMetadata();
+      setNftModuleMetaData(metaData);
+    } catch (e) {
+      console.warn(e);
     }
   };
 
+  const nftModule = useMemo(() => {
+    if (!provider) return;
+    const sdk = new ThirdwebSDK(provider.getSigner());
+    const nftModule = sdk.getNFTModule(NFT_BOODLE_COLLECTION_IDION_ID);
+
+    return nftModule;
+  }, [provider]);
+
   useEffect(() => {
-    if (!address) return;
-    initializeUserInSanity();
-  }, [address]);
+    if (!nftModule) return;
+    getNFTModuleMetadata();
+  }, [nftModuleMetaData]);
 
   return (
-    <Col className="h-screen">
-      <Navbar />
-      <Hero />
-    </Col>
+    <RootLayout source={ROOT_ROUTE}>
+      {isEmpty(nftModuleMetaData) ? (
+        <LineLoader />
+      ) : (
+        <Hero nftModuleMetaData={nftModuleMetaData} />
+      )}
+    </RootLayout>
   );
 };
 

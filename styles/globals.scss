@@ -33,3 +33,18 @@ a {
     justify-content: center;
   }
 }
+
+.ant-notification-notice-error {
+  background-color: #d84315;
+  color: white;
+  .ant-notification-notice-content {
+    .ant-notification-notice-with-icon {
+      span {
+        color: white;
+      }
+      .ant-notification-notice-message {
+        color: white;
+      }
+    }
+  }
+}

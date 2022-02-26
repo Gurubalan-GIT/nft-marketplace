@@ -13,15 +13,16 @@ const style = {
   ctaContainer: `flex`,
   accentedButton: ` relative text-lg font-semibold px-12 py-4 bg-[#2181e2] rounded-lg mr-5 text-white hover:bg-[#42a0ff] cursor-pointer`,
   button: ` relative text-lg font-semibold px-12 py-4 bg-[#363840] rounded-lg mr-5 text-[#e4e8ea] hover:bg-[#4c505c] cursor-pointer`,
-  cardContainer: `rounded-[3rem]`,
-  infoContainer: `h-20 bg-[#313338] p-4 rounded-b-lg flex items-center text-white`,
+  cardContainer: `rounded-[3rem] bg-[#313338] hover:bg-black cursor-pointer`,
+  infoContainer: `h-20 bg-[#1e1e1e] p-4 rounded-b-lg flex items-center text-white hover:bg-black cursor-pointer`,
   author: `flex flex-col justify-center ml-4`,
   name: ``,
   infoIcon: `flex justify-end items-center flex-1 text-[#8a939b] text-3xl font-bold`,
 };
 
-const Hero = () => {
+const Hero = ({ nftModuleMetaData }) => {
   const { address, connectWallet } = useWeb3();
+
   return (
     <div className={style.wrapper}>
       <div className={style.container}>
@@ -49,10 +50,14 @@ const Hero = () => {
               )}
             </div>
           </div>
-          <div className={style.cardContainer}>
+          <a
+            href={`/collections/${nftModuleMetaData?.address}`}
+            className={style.cardContainer}
+          >
             <img
               className="rounded-t-lg"
-              src="https://lh3.googleusercontent.com/ujepnqpnL0nDQIHsWxlCXzyw4pf01yjz1Jmb4kAQHumJAPrSEj0-e3ABMZlZ1HEpJoqwOcY_kgnuJGzfXbd2Tijri66GXUtfN2MXQA=s550"
+              src={nftModuleMetaData?.metadata?.image}
+              width="500px"
               alt="hero-bg"
             />
             <div className={style.infoContainer}>
@@ -62,15 +67,10 @@ const Hero = () => {
                 alt="hero-asset"
               />
               <div className={style.author}>
-                <a
-                  href="https://opensea.io/assets/0x495f947276749ce646f68ac8c248420045cb7b5e/2324922113504035910649522729980423429926362207300810036887725141691069366277"
-                  className={style.name}
-                >
-                  Jolly
-                </a>
+                <span>{nftModuleMetaData?.metadata?.name}</span>
               </div>
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
