@@ -275,7 +275,7 @@ const Collection = () => {
                       alt="eth"
                       className={styles.ethLogo}
                     />
-                    {nftCollectionTradedVolume}
+                    {Math.ceil(nftCollectionTradedVolume)}
                   </div>
                   <div className={styles.statName}>volume traded</div>
                 </div>
