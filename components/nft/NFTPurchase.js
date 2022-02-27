@@ -1,8 +1,9 @@
 import { useWeb3 } from "@3rdweb/hooks";
-import { LoginOutlined, WalletOutlined } from "@ant-design/icons";
+import { LoginOutlined, TagFilled, WalletOutlined } from "@ant-design/icons";
 import { Button, message } from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { Fragment } from "react/cjs/react.production.min";
 import { client as sanityClient } from "../../lib/sanity-client";
 
 const style = {
@@ -19,6 +20,7 @@ const PurchaseNFT = ({
   price,
   nftTransactions,
   setNftTransactions,
+  nftOwner,
 }) => {
   const [selectedMarketNft, setSelectedMarketNft] = useState();
   const [enableButton, setEnableButton] = useState(false);
@@ -26,6 +28,7 @@ const PurchaseNFT = ({
   const [isListedStatus, setIsListedStatus] = useState(isListed);
   const { address } = useWeb3();
   const router = useRouter();
+  const { collectionId, nftId } = router.query;
 
   useEffect(() => {
     if (!listings || !isListed) return;
@@ -46,8 +49,8 @@ const PurchaseNFT = ({
       price: Number(price),
       sellerContractAddress: selectedMarketNft?.sellerAddress,
       buyerContractAddress: address,
-      marketPlaceContractAddress: router.query.collectionId,
-      nftId: Number(router.query.nftId),
+      marketPlaceContractAddress: collectionId,
+      nftId: Number(nftId),
     };
     const transactionData = await sanityClient.create(transactionDoc);
     const updatedNftTransactionsData = [...nftTransactions];
@@ -87,7 +90,7 @@ const PurchaseNFT = ({
   };
 
   return (
-    <div className="flex h-20 w-full items-center rounded-lg border border-[#151c22] bg-[#303339] px-12">
+    <div className="flex h-fit w-full items-center rounded-lg border border-[#151c22] bg-[#303339] px-12 py-2">
       {isListedStatus ? (
         <Button
           icon={<WalletOutlined className={style.buttonIcon} />}
@@ -101,7 +104,36 @@ const PurchaseNFT = ({
           <div>{price} ETH Buy Now</div>
         </Button>
       ) : (
-        <div>This is a one of one NFT and is already purchased.</div>
+        <Fragment>
+          {nftOwner === address ? (
+            <div className="flex-col">
+              <div className="mb-2">
+                You Own this NFT and can list this on Testnet OpenSea.
+              </div>
+              <a
+                href={`https://testnets.opensea.io/assets/${collectionId}/${nftId}`}
+                className={`${style.button} bg-[#2081e2] hover:bg-[#42a0ff] items-center justify-center hover:text-white`}
+              >
+                <WalletOutlined className={style.buttonIcon} />
+                <div className={style.buttonText}>List Item</div>
+              </a>
+            </div>
+          ) : (
+            <div className="flex-col">
+              <div className="mb-2">
+                This NFT has been purchased. You can make an offer on TestNet
+                OpenSea.
+              </div>
+              <a
+                href={`https://testnets.opensea.io/assets/${collectionId}/${nftId}`}
+                className={`${style.button} border border-[#151c22]  bg-[#363840] hover:bg-[#4c505c] items-center justify-center hover:text-white`}
+              >
+                <TagFilled className={style.buttonIcon} />
+                <div className={style.buttonText}>Make Offer</div>
+              </a>
+            </div>
+          )}
+        </Fragment>
       )}
     </div>
   );

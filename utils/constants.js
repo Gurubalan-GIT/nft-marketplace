@@ -4,33 +4,6 @@ import { Fragment } from "react";
 import { ETH_SVG_PATH } from "../localization";
 import { getTimeElapsedWithPerspective } from "./helpers";
 
-export const dummyTransactionEvents = [
-  {
-    price: 17,
-    from: "0xGuru",
-    to: "0xDavid",
-    date: "4 months ago",
-  },
-  {
-    price: 17,
-    from: "0xGuru",
-    to: "0xDavid",
-    date: "4 months ago",
-  },
-  {
-    price: 17,
-    from: "0xGuru",
-    to: "0xDavid",
-    date: "4 months ago",
-  },
-  {
-    price: 17,
-    from: "0xGuru",
-    to: "0xDavid",
-    date: "4 months ago",
-  },
-];
-
 export const transactionTableColumns = [
   {
     title: "Event",

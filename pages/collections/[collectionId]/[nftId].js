@@ -143,6 +143,7 @@ const Nft = () => {
                     selectedNft={selectedNft}
                   />
                   <PurchaseNFT
+                    nftOwner={nftOwner}
                     nftTransactions={nftTransactions}
                     setNftTransactions={setNftTransactions}
                     isListed={
