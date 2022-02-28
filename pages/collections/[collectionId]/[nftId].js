@@ -154,6 +154,7 @@ const Nft = () => {
                     selectedNft={selectedNft}
                     listings={listings}
                     marketPlaceModule={marketPlaceModule}
+                    setNftOwner={setNftOwner}
                     price={
                       listings.find(
                         (listing) => listing.asset.id === selectedNft.id

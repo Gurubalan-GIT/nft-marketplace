@@ -26,7 +26,7 @@ const Navbar = () => {
       <Link passHref href="/">
         <div className={styles.logoContainer}>
           <Image alt="logo" src={openseaLogo} height={40} width={40} />
-          <div className={styles.logoText}>Opensea</div>
+          <div className={styles.logoText}>GBHMKT</div>
         </div>
       </Link>
       <div className={styles.searchBar}>
