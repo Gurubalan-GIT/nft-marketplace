@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ETH_SVG_PATH } from "../localization";
 const styles = {
-  wrapper: `bg-[#303339] w-[14rem] h-[22rem] my-10 mx-5 overflow-hidden hover:cursor-pointer hover:bg-[#000000]`,
+  wrapper: `bg-[#303339] h-[22rem] my-10 mx-5 overflow-hidden hover:cursor-pointer hover:bg-[#000000] rounded-md`,
   imgContainer: `h-2/3 w-full overflow-hidden flex justify-center items-center`,
   nftImg: `w-full object-cover`,
   details: `p-3`,
