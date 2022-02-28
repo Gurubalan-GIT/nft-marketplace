@@ -164,6 +164,6 @@ npm run dev
 
 ## Configuring your data-feeds
 
-- Check the file [localization.js](/localization.js) for URLs being used.
+- Check the file [localization.js](/localization.js) for marketplace addresses being used.
 - For Sanity, please modify the sanity [client](/lib/sanity-client.js) with your details.
 - Login into [ThirdWeb](https://thirdweb.com/) and create a NFT marketplace and a collection to go with minted NFTs. You would get the contract addresses of them after this.

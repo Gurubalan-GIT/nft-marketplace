@@ -32,7 +32,7 @@ const Hero = ({ nftModuleMetaData }) => {
               Discover, collect, and sell extraordinary NFTs
             </div>
             <div className={style.description}>
-              OpenSea is the world&apos;s first and largest NFT marketplace
+              GBHMkt is the world&apos;s first and largest NFT marketplace
             </div>
             <div className={style.ctaContainer}>
               {address ? (

@@ -21,6 +21,7 @@ const PurchaseNFT = ({
   nftTransactions,
   setNftTransactions,
   nftOwner,
+  setNftOwner,
 }) => {
   const [selectedMarketNft, setSelectedMarketNft] = useState();
   const [enableButton, setEnableButton] = useState(false);
@@ -61,6 +62,7 @@ const PurchaseNFT = ({
   const confirmPurchase = () => {
     setBuyingNFT(false);
     setIsListedStatus(false);
+    setNftOwner(address);
     createTransactionOnSanity();
     message.success({
       content: `Purchase successful`,
